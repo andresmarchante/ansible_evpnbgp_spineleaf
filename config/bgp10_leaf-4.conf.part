@@ -1,0 +1,75 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+router bgp 65024
+ router-id 100.4.1.1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ address-family ipv4 unicast
+  network 10.4.1.1/32
+
+
+
+
+ neighbor interface ethernet1/1/52
+  no shutdown
+
+  send-community extended
+  address-family l2vpn evpn
+   activate
+
+
+  no shutdown
+
+ neighbor interface ethernet1/1/51
+  no shutdown
+
+  send-community extended
+  address-family l2vpn evpn
+   activate
+
+
+  no shutdown
+
+
+

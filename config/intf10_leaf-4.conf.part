@@ -1,0 +1,164 @@
+ 
+interface loopback0
+
+
+
+
+ 
+ ip address 10.4.1.1/32
+ 
+
+
+
+
+
+
+ no shutdown
+ 
+interface virtual-network1002
+
+
+
+
+ 
+ ip vrf forwarding TENANT1
+ ip address 192.168.102.4/24
+ 
+ ip virtual-router address 192.168.102.1
+
+
+
+
+
+
+ no shutdown
+ 
+interface virtual-network1006
+
+
+
+
+ 
+ ip vrf forwarding TENANT1
+ ip address 192.168.106.4/24
+ 
+ ip virtual-router address 192.168.106.1
+
+
+
+
+
+
+ no shutdown
+ 
+interface ethernet1/1/1
+ description "link to esx03-vmnic2"
+
+
+
+ switchport mode trunk
+
+ 
+ 
+
+
+
+
+
+
+ no shutdown
+ 
+interface ethernet1/1/52
+ description "link to SPINE1"
+
+
+
+ no switchport
+
+ mtu 9216
+ 
+ 
+
+
+ ipv6 nd send-ra
+
+
+ ipv6 nd max-ra-interval 4
+ ipv6 nd min-ra-interval 3
+
+
+ no shutdown
+ 
+interface ethernet1/1/51
+ description "link to SPINE2"
+
+
+
+ no switchport
+
+ mtu 9216
+ 
+ 
+
+
+ ipv6 nd send-ra
+
+
+ ipv6 nd max-ra-interval 4
+ ipv6 nd min-ra-interval 3
+
+
+ no shutdown
+ 
+interface ethernet1/1/2
+ description "link to esx04-vmnic2"
+
+
+
+ switchport mode trunk
+
+ 
+ 
+
+
+
+
+
+
+ shutdown
+ 
+interface ethernet1/1/53
+ 
+ description VLTi
+
+
+
+ no switchport
+
+ 
+ 
+
+
+
+
+
+
+ no shutdown
+ 
+interface ethernet1/1/54
+ 
+ description VLTi
+
+
+
+ no switchport
+
+ 
+ 
+
+
+
+
+
+
+ no shutdown

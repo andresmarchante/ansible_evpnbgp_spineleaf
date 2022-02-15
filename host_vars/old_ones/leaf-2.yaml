@@ -1,0 +1,130 @@
+hostname: leaf-2
+os10_cfg_generate: True
+dellos_cfg_generate: True
+build_dir: /home/ansible/evpn-bgp/config
+
+ansible_ssh_user: admin
+ansible_ssh_pass: admin
+
+os10_system:
+  hostname: "Leaf2"
+
+os10_interface:
+  loopback 0:
+    admin: up
+    ip_and_mask: 10.2.1.1/32
+  virtual-network 1008:
+    vrf: "TENANT1"
+    admin: up
+    ip_and_mask: "192.168.108.2/24"
+    virtual_gateway_ip: "192.168.108.1"
+  ethernet 1/1/1:
+    desc: "link to esx01-vmnic3"
+    admin: up
+    portmode: trunk
+  ethernet 1/1/52:
+    desc: "link to SPINE1"
+    admin: up
+    switchport: False
+    mtu: 9216
+    suppress_ra: absent
+    min_ra: 3
+    max_ra: 4 
+  ethernet 1/1/51:
+    desc: "link to SPINE2"
+    admin: up
+    switchport: False
+    mtu: 9216
+    suppress_ra: absent
+    min_ra: 3
+    max_ra: 4
+  ethernet 1/1/2:
+    desc: "link to esx02-vmnic2"
+    admin: up
+    portmode: trunk
+   
+os10_vrf:
+  vrfdetails:
+   - vrf_name: "TENANT1"
+     state: "present"    
+
+os10_bgp:     
+  asn: 65021
+  router_id: 100.2.1.1
+  ipv4_network:
+    - address: 10.2.1.1/32
+      state: present
+  neighbor:
+    - type: ipv4
+      interface: ethernet1/1/52
+      send_community:
+       - type: extended
+         state: present
+      address_family:
+        - type: "l2vpn"
+          activate: true
+          state: present
+      admin: up
+      state: present
+    - type: ipv4
+      interface: ethernet1/1/51
+      send_community:
+       - type: extended
+         state: present
+      address_family:
+        - type: "l2vpn"
+          activate: true
+          state: present
+      admin: up
+      state: present
+
+
+os10_vxlan:
+    anycast_gateway_mac: "00:01:01:01:01:01"
+    nve:
+      source_interface: 0
+      state: "present"
+    evpn:
+      autoevi: True
+      rmac: 00:00:01:02:03:04
+      vrf:
+       - name: "TENANT1"
+         vni: 3000
+         adv_ipv4:
+          - type: "bgp"
+            state: "present"
+         route_target:
+          - type: "manual"
+            asn_value: "3000:3000"
+            route_target_type: "both"
+            state: "present"
+    virtual_network:
+      virtual_net:
+        - id: 1002
+          member_interface:
+            - ifname: "ethernet 1/1/1"
+              type: "tagged"
+              vlanid: 102
+              state: "present"
+          vxlan_vni: 
+            id: 1002
+            state: "present"
+          state: "present"
+        - id: 1006
+          member_interface:
+            - ifname: "ethernet 1/1/2"
+              type: "tagged"
+              vlanid: 106
+              state: "present"
+          vxlan_vni:
+            id: 1006
+            state: "present" 
+          state: "present"
+
+os10_vlt:
+   domain: 1
+   destination_type: "ipv4"
+   peer_routing: True
+   discovery_intf: "1/1/53-1/1/54"
+   state: "present"
+

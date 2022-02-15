@@ -1,0 +1,143 @@
+hostname: leaf-4
+os10_cfg_generate: True
+dellos_cfg_generate: True
+build_dir: /home/ansible/evpn-bgp/config
+
+ansible_ssh_user: admin
+ansible_ssh_pass: admin
+ansible_network_os: dellemc.os10.os10
+
+os10_system:
+  hostname: "Leaf4"
+
+os10_interface:
+  loopback 0:
+      admin: up
+      ip_and_mask: 10.4.1.1/32 
+  virtual-network 1002:
+    vrf: "TENANT1"
+    admin: up
+    ip_and_mask: "192.168.102.4/24"
+    virtual_gateway_ip: "192.168.102.1"
+  virtual-network 1006:
+    vrf: "TENANT1"
+    admin: up
+    ip_and_mask: "192.168.106.4/24"
+    virtual_gateway_ip: "192.168.106.1"
+  ethernet 1/1/1:
+    desc: "link to esx03-vmnic2"
+    admin: up
+    portmode: trunk
+  ethernet 1/1/52:
+    desc: "link to SPINE1"
+    admin: up
+    switchport: False
+    mtu: 9216
+    suppress_ra: absent
+    min_ra: 3
+    max_ra: 4
+  ethernet 1/1/51:
+    desc: "link to SPINE2"
+    admin: up
+    switchport: False
+    mtu: 9216
+    suppress_ra: absent
+    min_ra: 3
+    max_ra: 4
+  ethernet 1/1/2:
+    desc: "link to esx04-vmnic2"
+    admin: down
+    portmode: trunk
+  ethernet 1/1/53:
+    desc: "VLTi"
+    admin: up
+    switchport: False
+  ethernet 1/1/54:
+    desc: "VLTi"
+    admin: up
+    switchport: False
+
+
+os10_vrf:
+  vrfdetails: 
+   - vrf_name: "TENANT1"
+     state: "present"   
+
+os10_bgp:     
+  asn: 65024
+  router_id: 100.4.1.1
+  ipv4_network: 
+    - address: 10.4.1.1/32
+      state: present
+  neighbor:
+    - type: ipv4
+      interface: ethernet1/1/52
+      send_community:
+       - type: extended
+         state: present 
+      address_family:
+        - type: "l2vpn"
+          activate: true
+          state: present
+      admin: up
+      state: present
+    - type: ipv4
+      interface: ethernet1/1/51
+      send_community:
+       - type: extended
+         state: present
+      address_family:
+        - type: "l2vpn"
+          activate: true
+          state: present
+      admin: up
+      state: present
+  state: present
+
+os10_vxlan:
+    anycast_gateway_mac: "00:01:01:01:01:01"
+    nve:
+      source_interface: 0
+      state: "present"
+    evpn:
+      autoevi: True
+      rmac: 00:00:01:02:03:05
+      vrf:
+       - name: "TENANT1"
+         vni: 3000
+         route_target:
+          - type: "manual"
+            asn_value: "3000:3000"
+            route_target_type: "both"
+            state: "present"
+    virtual_network:
+      virtual_net:
+        - id: 1002
+          member_interface:
+            - ifname: "ethernet 1/1/1"
+              type: "tagged"
+              vlanid: 102
+              state: "present"
+          vxlan_vni: 
+            id: 1002
+            state: "present"
+          state: "present"
+        - id: 1006
+          member_interface:
+            - ifname: "ethernet 1/1/2"
+              type: "tagged"
+              vlanid: 106
+              state: "present"
+          vxlan_vni:
+            id: 1006
+            state: "present" 
+          state: "present"
+
+
+os10_vlt:
+   domain: 1
+   destination_type: "ipv4"
+   peer_routing: True
+   discovery_intf: "1/1/53-1/1/54"
+   state: "present"
+

@@ -1,0 +1,37 @@
+ip virtual-router mac-address 00:01:01:01:01:01
+
+nve
+ source-interface loopback0
+ 
+
+evpn
+ router-mac 00:00:01:02:03:04
+ no disable-rt-asn
+             vrf  TENANT1
+             vni 3000
+                  route-target 3000:3000 both
+
+ auto-evi
+
+virtual-network untagged-vlan 1000
+    
+virtual-network 1002
+ member-interface ethernet 1/1/1 vlan-tag 102
+  
+  
+ member-interface ethernet 1/1/3 untagged  
+  
+ vxlan-vni 1002
+  
+               
+     
+ 
+virtual-network 1006
+ member-interface ethernet 1/1/2 vlan-tag 106
+  
+  
+ vxlan-vni 1006
+  
+               
+     
+ 

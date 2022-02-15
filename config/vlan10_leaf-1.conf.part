@@ -1,0 +1,11 @@
+
+
+interface vlan1000
+
+
+
+
+interface ethernet1/1/4
+ switchport access vlan 1000
+
+

@@ -1,0 +1,92 @@
+hostname: spine-1
+os10_cfg_generate: True
+dellos_cfg_generate: True
+build_dir: /home/ansible/evpn-bgp/config
+
+ansible_ssh_user: admin
+ansible_ssh_pass: admin
+
+os10_system:
+  hostname: "Spine1"
+
+os10_interface:
+  loopback 1:
+    admin: up
+    ip_and_mask: 10.13.1.1/32
+  ethernet 1/1/1:
+    desc: "link to Leaf1"
+    admin: up
+    switchport: False
+    mtu: 9216
+    suppress_ra: absent
+    min_ra: 3
+    max_ra: 4
+  ethernet 1/1/2:
+    desc: "link to Leaf2"
+    admin: up
+    switchport: False
+    mtu: 9216
+    suppress_ra: absent
+    min_ra: 3
+    max_ra: 4
+  ethernet 1/1/3:
+    desc: "link to Leaf3"
+    admin: up
+    switchport: False
+    mtu: 9216
+    suppress_ra: absent
+    min_ra: 3
+    max_ra: 4
+  ethernet 1/1/4:
+    desc: "link to Leaf4"
+    admin: up
+    switchport: False
+    mtu: 9216
+    suppress_ra: absent
+    min_ra: 3
+    max_ra: 4
+
+
+os10_bgp:     
+  asn: 65123
+  router_id: 100.13.1.1
+  ipv4_network:
+   - address: 10.13.1.1/32
+     state: present
+  neighbor:
+   - type: "peergroup"
+     name: "ebgp_session"
+     send_community:
+       - type: extended
+         state: present
+     address_family:
+       - type: "l2vpn"
+         activate: true
+         state: present
+     state: present
+   - type: ipv4
+     interface: ethernet1/1/1
+     peergroup: ebgp_session
+     peergroup_type: ebgp
+     admin: up
+     state: present
+   - type: ipv4
+     interface: ethernet1/1/2
+     peergroup: ebgp_session
+     peergroup_type: ebgp
+     admin: up
+     state: present
+   - type: ipv4
+     interface: ethernet1/1/3
+     peergroup: ebgp_session
+     peergroup_type: ebgp
+     admin: up
+     state: present
+   - type: ipv4
+     interface: ethernet1/1/4
+     peergroup: ebgp_session
+     peergroup_type: ebgp
+     admin: up
+     state: present
+  state: present 
+

@@ -1,0 +1,88 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+router bgp 65124
+ router-id 100.14.1.1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ address-family ipv4 unicast
+  network 10.14.1.1/32
+
+
+
+
+ template ebgp_session
+
+
+  send-community extended
+  address-family l2vpn evpn
+   activate
+
+
+
+ neighbor interface ethernet1/1/1
+  no shutdown
+  inherit template ebgp_session inherit-type ebgp
+
+  no shutdown
+
+ neighbor interface ethernet1/1/2
+  no shutdown
+  inherit template ebgp_session inherit-type ebgp
+
+  no shutdown
+
+ neighbor interface ethernet1/1/3
+  no shutdown
+  inherit template ebgp_session inherit-type ebgp
+
+  no shutdown
+
+ neighbor interface ethernet1/1/4
+  no shutdown
+  inherit template ebgp_session inherit-type ebgp
+
+  no shutdown
+
+
+

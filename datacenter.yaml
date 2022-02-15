@@ -1,0 +1,14 @@
+- hosts: datacenter
+  connection: network_cli
+  gather_facts: yes
+  collections:
+    - dellemc.os10
+  roles:
+    - os10_system
+    - os10_vrf
+    - os10_interface
+    - os10_bgp
+    - os10_vxlan
+    - os10_vlt
+    - os10_lag
+    - os10_vlan

@@ -1,0 +1,4 @@
+vlt-domain 1
+ discovery-interface ethernet1/1/53-1/1/54
+ peer-routing
+
